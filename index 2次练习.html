@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="stylesheet" href="css/reset.css" />
+    <link rel="stylesheet" href="css/main.css" />
+    <title>聊天机器人</title>
+</head>
+
+<body>
+    <div class="wrap">
+        <!-- 头部 Header 区域 -->
+        <div class="header">
+            <h3>小思同学</h3>
+            <img src="img/person01.png" alt="icon" />
+        </div>
+        <!-- 中间 聊天内容区域 -->
+        <div class="main">
+            <ul class="talk_list" style="top: 0px;" id="talk_list">
+                <!-- 机器人 -->
+                <li class="left_word">
+                    <img src="img/person01.png" /> <span>嗨，最近想我没有？</span>
+                </li>
+                <!-- 我 -->
+                <!-- <li class="right_word">
+          <img src="img/person02.png" /> <span>嗨，最近想我没有？</span>
+        </li> -->
+            </ul>
+        </div>
+        <!-- 底部 消息编辑区域 -->
+        <div class="footer">
+            <img src="img/person02.png" alt="icon" />
+            <input type="text" placeholder="说的什么吧..." class="input_txt" id="ipt" />
+            <input type="button" value="发 送" class="input_sub" id="btnSend" />
+        </div>
+    </div>
+    <script type="text/javascript" src="js/jquery-1.12.4.min.js"></script>
+    <audio src="" id="voice" autoplay style="display: none;"></audio>
+    <script>
+        (function(){
+            // 声明变量
+            var $talk_list = $('#talk_list')
+            var $ipt = $('#ipt')
+            var $btnSend = $('#btnSend')
+
+            // 设置事件
+            $btnSend.on('click',function(){
+                var text = $ipt.val().trim();
+                // 清空输入框
+                $ipt.val();
+                // 设置输入提示
+                if(!text){
+                    return alert('请输入内容');
+                }
+                // 创建结构添加到（#talk-list）
+                var $myWord = $('<li class="right_word"></li>')
+                $myWord.html(`
+                    <img src="img/person02.png" /> 
+                    <span>${text}</span>
+                `)
+                $myWord.appendTo($talk_list)
+            })
+        })
+    </script>
+</body>
+
+</html>
+

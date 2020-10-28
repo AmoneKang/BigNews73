@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="stylesheet" href="css/reset.css" />
+    <link rel="stylesheet" href="css/main.css" />
+    <title>聊天机器人</title>
+</head>
+
+<body>
+    <div class="wrap">
+        <!-- 头部 Header 区域 -->
+        <div class="header">
+            <h3>小思同学</h3>
+            <img src="img/person01.png" alt="icon" />
+        </div>
+        <!-- 中间 聊天内容区域 -->
+        <div class="main">
+            <ul class="talk_list" style="top: 0px;" id="talk_list">
+                <!-- 机器人 -->
+                <li class="left_word">
+                    <img src="img/person01.png" /> <span>嗨，最近想我没有？</span>
+                </li>
+                <!-- 我 -->
+                <!-- <li class="right_word">
+          <img src="img/person02.png" /> <span>嗨，最近想我没有？</span>
+        </li> -->
+            </ul>
+        </div>
+        <!-- 底部 消息编辑区域 -->
+        <div class="footer">
+            <img src="img/person02.png" alt="icon" />
+            <input type="text" placeholder="说的什么吧..." class="input_txt" id="ipt" />
+            <input type="button" value="发 送" class="input_sub" id="btnSend" />
+        </div>
+    </div>
+    <script type="text/javascript" src="js/jquery-1.12.4.min.js"></script>
+    <audio src="" id="voice" autoplay style="display: none;"></audio>
+    <script>
+    $(function() {
+        // 功能
+        // 1. 点击发送按钮，将我说的话添加到页面中（ul#talk_list）
+        // 2. 发送ajax请求，将我说的话发送到服务器上
+        // 3. 接受到服务器响应回来的说的话，将其展示到页面中
+
+        // 功能1. 点击发送按钮，将我说的话添加到页面中（ul#talk_list）
+        var $btnSend = $('#btnSend')
+        var $ipt = $('#ipt')
+        var $talk_list = $('#talk_list')
+        var $base = 'http://www.liulongbin.top:3006'
+        var $voice = $('#voice')
+        $btnSend.on('click',function(){
+            var text = $ipt.val().trim();
+            // 请空
+            $ipt.val('');
+            // 提示
+            if(!text){
+                return alert('请输入内容');
+            }
+            
+            // 创建li结构==>添加到ul中
+            var $myWord = $(`
+            <li class="right_word">
+                <img src="img/person02.png" /> 
+                <span>${text}</span>
+            </li>
+            `)
+            $myWord.appendTo($talk_list);
+            $myWord[0].scrollIntoView();
+
+            // 获取机器人的话
+            $.ajax({
+                url:$base+'/api/robot',
+                data:{
+                    spoken:text
+                },
+                success:function(info){
+                    // console.log(info);
+                   var tet = info.data.info.text; 
+                   var $hisWord=$(`
+                     <li class="left_word">
+                        <img src="img/person01.png" /> 
+                        <span>${tet}</span>
+                    </li>`)
+                    $hisWord.appendTo($talk_list);
+                    $hisWord[0].scrollIntoView();
+                    getvoice(tet)
+                }
+                
+            })
+            function getvoice(text){
+             $.ajax({
+                url:$base+'/api/synthesize',
+                data:{
+                    text:text
+                },
+                success:function(info){
+                    // console.log(info);
+                    $voice.attr('src',info.voiceUrl)
+                }
+
+             })
+           }
+        })
+        $ipt.on('keyup',function(e){
+            if(e.keyCode ===13){
+                $btnSend.click();
+            }
+        })
+    })
+    </script>
+</body>
+
+</html>
+
